@@ -3,6 +3,8 @@
 ![docs/screenshot.png](docs/screenshot.png)
 
 ```go
+import "github.com/funatsufumiya/ebiten_path/path"
+
 p := path.NewPath()
 p.Arc(200, 200, 80, 0, 270, 40)
 p.LineTo(400, 100)
