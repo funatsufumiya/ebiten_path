@@ -37,7 +37,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	bg := color.RGBA{240, 240, 240, 255}
+	bg := color.RGBA{160, 160, 160, 255}
 	screen.Fill(bg)
 	g.p.Draw(screen, color.Black, 3)
 	for i := 0; i <= 9; i++ {
