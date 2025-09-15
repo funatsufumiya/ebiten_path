@@ -220,11 +220,39 @@ func cubicBezier(p0, p1, p2, p3 Point, t float32) Point {
 	}
 }
 
-func (p *Path) Draw(dst *ebiten.Image, clr color.Color, strokeWidth float32) {
+func (p *Path) DrawStroke(dst *ebiten.Image, clr color.Color, strokeWidth float32, opts *ebiten.DrawImageOptions) {
 	for i := 0; i < len(p.points)-1; i++ {
-		vector.StrokeLine(dst, p.points[i].X, p.points[i].Y, p.points[i+1].X, p.points[i+1].Y, strokeWidth, clr, true)
+		x0, y0 := opts.GeoM.Apply(float64(p.points[i].X), float64(p.points[i].Y))
+		x1, y1 := opts.GeoM.Apply(float64(p.points[i+1].X), float64(p.points[i+1].Y))
+		vector.StrokeLine(dst, float32(x0), float32(y0), float32(x1), float32(y1), strokeWidth, clr, true)
 	}
 	if p.closed && len(p.points) > 1 {
-		vector.StrokeLine(dst, p.points[len(p.points)-1].X, p.points[len(p.points)-1].Y, p.points[0].X, p.points[0].Y, strokeWidth, clr, true)
+		x0, y0 := opts.GeoM.Apply(float64(p.points[len(p.points)-1].X), float64(p.points[len(p.points)-1].Y))
+		x1, y1 := opts.GeoM.Apply(float64(p.points[0].X), float64(p.points[0].Y))
+		vector.StrokeLine(dst, float32(x0), float32(y0), float32(x1), float32(y1), strokeWidth, clr, true)
 	}
+}
+
+func (p *Path) DrawFilled(dst *ebiten.Image, clr color.Color, opts *ebiten.DrawImageOptions) {
+	if len(p.points) < 3 {
+		return
+	}
+	var vertices []ebiten.Vertex
+	for _, pt := range p.points {
+		x, y := opts.GeoM.Apply(float64(pt.X), float64(pt.Y))
+		vertices = append(vertices, ebiten.Vertex{
+			DstX: float32(x), DstY: float32(y),
+			ColorR: float32(clr.(color.RGBA).R) / 255,
+			ColorG: float32(clr.(color.RGBA).G) / 255,
+			ColorB: float32(clr.(color.RGBA).B) / 255,
+			ColorA: float32(clr.(color.RGBA).A) / 255,
+		})
+	}
+	var indices []uint16
+	for i := 1; i < len(vertices)-1; i++ {
+		indices = append(indices, 0, uint16(i), uint16(i+1))
+	}
+	img := ebiten.NewImage(1, 1)
+	img.Fill(color.White)
+	dst.DrawTriangles(vertices, indices, img, nil)
 }

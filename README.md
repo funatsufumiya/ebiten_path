@@ -15,14 +15,18 @@ p.Close()
 percent := float32(0.4)
 
 // get point
-pt := g.p.GetPointAtPercent(percent)
 // get degrees
-deg := g.p.GetDegreesAtPercent(percent)
-
-/// ...
+pt := p.GetPointAtPercent(percent)
+deg := p.GetDegreesAtPercent(percent)
 
 func (g *Game) Draw(screen *ebiten.Image) {
-    // draw path
+    opts := &ebiten.DrawImageOptions{}
+
+	// draw filled path
+	// p.DrawFilled(screen, color.RGBA{200,220,255,128}, opts)
+
+	// draw stroke path
+	p.DrawStroke(screen, color.Black, 3, opts)
 	g.p.Draw(screen, color.Black, 3)
 }
 ```
@@ -42,4 +46,4 @@ $ go run ./example/main.go
 
 ## Note
 
-Except `Draw()`, almost dependent from Ebitengine.
+Except `DrawFilled()` / `DrawStroke()`, almost dependent from Ebitengine.
