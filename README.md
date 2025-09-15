@@ -15,8 +15,9 @@ p.Close()
 percent := float32(0.4)
 
 // get point
-// get degrees
 pt := p.GetPointAtPercent(percent)
+
+// get degrees
 deg := p.GetDegreesAtPercent(percent)
 
 func (g *Game) Draw(screen *ebiten.Image) {
