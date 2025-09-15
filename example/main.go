@@ -5,6 +5,8 @@ import (
 	"image/color"
 	"log"
 
+	math "github.com/chewxy/math32"
+
 	"github.com/funatsufumiya/ebiten_path/path"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -38,13 +40,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	bg := color.RGBA{240, 240, 240, 255}
 	screen.Fill(bg)
 	g.p.Draw(screen, color.Black, 3)
-	for i := 0; i <= 10; i++ {
+	for i := 0; i <= 9; i++ {
 		percent := float32(i) / 10
 		pt := g.p.GetPointAtPercent(percent)
 		vector.DrawFilledRect(screen, pt.X-3, pt.Y-3, 6, 6, color.RGBA{255, 0, 0, 255}, true)
-		ebitenutil.DebugPrintAt(screen, 
-			fmt.Sprintf("%.1f", percent), 
+		ebitenutil.DebugPrintAt(screen,
+			fmt.Sprintf("%.1f", percent),
 			int(pt.X)+8, int(pt.Y)-8)
+
+		deg := g.p.GetDegreesAtPercent(percent)
+		ebitenutil.DebugPrintAt(screen,
+			fmt.Sprintf("%.1f°", deg),
+			int(pt.X)+8, int(pt.Y)+8)
+
+		rad := g.p.GetRadiansAtPercent(percent)
+		dx := float32(30) * math.Cos(rad)
+		dy := float32(30) * math.Sin(rad)
+		vector.StrokeLine(screen, pt.X, pt.Y, pt.X+dx, pt.Y+dy, 2, color.RGBA{0, 0, 255, 255}, true)
 	}
 }
 

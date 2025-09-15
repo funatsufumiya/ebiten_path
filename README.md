@@ -2,4 +2,4 @@
 
 Ebitengine port from [ofPolyline of openFrameworks](https://openframeworks.cc/documentation/graphics/ofPolyline/)
 
-Useful for path animation using `GetPointAtPercent()`
+Useful for path animation using `GetPointAtPercent()` / `GetDegreesAtPercent()` / `GetRadiansAtPercent()`

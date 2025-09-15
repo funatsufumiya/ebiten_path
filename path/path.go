@@ -17,6 +17,43 @@ type Path struct {
 	closed bool
 }
 
+func (p *Path) GetRadiansAtPercent(percent float32) float32 {
+	if len(p.points) < 2 {
+		return 0
+	}
+	lengths := p.segmentLengths()
+	total := float32(0)
+	for _, l := range lengths {
+		total += l
+	}
+	target := percent * total
+	accum := float32(0)
+	for i := 0; i < len(lengths); i++ {
+		if accum+lengths[i] >= target {
+			p0 := p.points[i]
+			var p1 Point
+			if i+1 < len(p.points) {
+				p1 = p.points[i+1]
+			} else {
+				p1 = p.points[0]
+			}
+			dx := float64(p1.X - p0.X)
+			dy := float64(p1.Y - p0.Y)
+			return float32(math.Atan2(dy, dx))
+		}
+		accum += lengths[i]
+	}
+	p0 := p.points[len(p.points)-2]
+	p1 := p.points[len(p.points)-1]
+	dx := float64(p1.X - p0.X)
+	dy := float64(p1.Y - p0.Y)
+	return float32(math.Atan2(dy, dx))
+}
+
+func (p *Path) GetDegreesAtPercent(percent float32) float32 {
+	return p.GetRadiansAtPercent(percent) * 180 / float32(math.Pi)
+}
+
 func NewPath() *Path {
 	return &Path{points: []Point{}}
 }
